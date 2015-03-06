@@ -1,3 +1,3 @@
 class AlertSerializer < ActiveModel::Serializer
-  attributes :email, :symbol, :price
+  attributes :id, :email, :symbol, :price
 end
