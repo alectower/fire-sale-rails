@@ -13,6 +13,16 @@ class AlertsController < ApplicationController
     end
   end
 
+  def destroy
+    alert = Alert.find(params[:id])
+    if alert.delete
+      render json: nil
+    else
+      render json: alert.errors,
+        status: :unprocessable_entity
+    end
+  end
+
   private
 
   def alert_params
