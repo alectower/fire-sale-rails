@@ -49,5 +49,9 @@ class AlertEvaluator
         end
       end
     end
+  rescue KeyError, StandardError => error
+    ExceptionMailer.delay.mail_exception error.message,
+      error.backtrace
+    raise error
   end
 end
