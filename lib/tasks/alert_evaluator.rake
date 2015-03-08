@@ -44,6 +44,7 @@ class AlertEvaluator
         bid_price = company['bid'].to_f
         price = ask_price > 0 ? ask_price : bid_price
         if price <= alert_price
+          puts 'Sending email...'
           AlertMailer.delay.send_alert email,
             company['symbol'], alert_price, price
         end
