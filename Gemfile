@@ -7,6 +7,7 @@ gem 'pg'
 gem 'puma'
 gem 'rails'
 gem 'rails-api'
+gem 'redis'
 gem 'sidekiq'
 gem 'sdoc', group: :doc
 

@@ -163,6 +163,7 @@ DEPENDENCIES
   puma
   rails
   rails-api
+  redis
   sdoc
   sidekiq
   spring
