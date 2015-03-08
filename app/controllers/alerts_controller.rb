@@ -1,15 +1,18 @@
 class AlertsController < ApplicationController
   def index
-    render json: Alert.where(email: params[:email])
+    render json: {
+      alerts: Alert.where(email: params[:email])
+    }
   end
 
   def create
     alert = Alert.new(alert_params)
     if alert.save
-      render json: alert
+      render json: { alert: alert }
     else
-      render json: alert.errors,
-        status: :unprocessable_entity
+      render json: {
+        errors: alert.errors
+      }, status: :unprocessable_entity
     end
   end
 
@@ -18,8 +21,9 @@ class AlertsController < ApplicationController
     if alert.delete
       render json: nil
     else
-      render json: alert.errors,
-        status: :unprocessable_entity
+      render json: {
+        errors: alert.errors
+      }, status: :unprocessable_entity
     end
   end
 
