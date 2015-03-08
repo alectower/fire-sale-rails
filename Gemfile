@@ -4,6 +4,7 @@ gem 'active_model_serializers'
 gem 'oauth'
 gem 'letter_opener', group: :development
 gem 'pg'
+gem 'puma'
 gem 'rails'
 gem 'rails-api'
 gem 'sidekiq'
