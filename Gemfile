@@ -1,9 +1,10 @@
 source 'https://rubygems.org'
 
 gem 'active_model_serializers'
-gem 'oauth'
 gem 'letter_opener', group: :development
+gem 'oauth'
 gem 'pg'
+gem 'platform-api'
 gem 'puma'
 gem 'rails'
 gem 'rails-api'
