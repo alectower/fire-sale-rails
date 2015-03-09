@@ -1,12 +1,12 @@
 class FireSaleController < ApplicationController
   def index
-    render text: redis.get('#{version}:index.html')
+    render text: redis.get('fire-sale:#{version}')
   end
 
   private
 
   def version
-    params[:version] ||= 'release'
+    params[:version] ||= 'current'
   end
 
   def redis
