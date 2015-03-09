@@ -1,6 +1,3 @@
-require 'sidekiq/api'
-require 'platform-api'
-
 desc "Fetch stock quotes and send alert emails"
 task :alert_emailer => :environment do
   puts "running alert evaluator..."
@@ -53,34 +50,9 @@ class AlertEvaluator
         end
       end
     end
-
-    scale_workers if Rails.env.production?
   rescue KeyError, StandardError => error
     ExceptionMailer.delay.mail_exception error.message,
       error.backtrace
     raise error
-  end
-
-  def self.scale_workers
-    heroku = PlatformAPI.connect_oauth(ENV['HEROKU_OAUTH_TOKEN'])
-    heroku.formation.update ENV['APP_NAME'], 'worker', {
-      "quantity" => "1",
-      "size" => "1X"
-    }
-    queue = Sidekiq::Queue.new
-    ps = Sidekiq::ProcessSet.new
-    loop do
-      sleep(0.1)
-      if queue.size == 0
-        loop do
-          if ps.size == 0
-            heroku.formation.update ENV['APP_NAME'],
-              'worker', { "quantity" => "0" }
-            break
-          end
-        end
-        break
-      end
-    end
   end
 end
