@@ -1,19 +1,18 @@
 class FireSaleController < ApplicationController
   def index
-    render text: redis.get('fire-sale:#{version}')
+    render text: redis.get(version)
   end
 
   private
 
   def version
-    params[:version] ||= 'current'
+    params[:version] ||= redis.get("fire-sale:current")
   end
 
   def redis
-    @redis ||= if Rails.env.development?
-      Redis.new
-    else
-      Redis.new url: ENV['REDISTOGO_URL']
-    end
+    @redis ||= -> do
+      url = ENV['REDIS_URL'] || 'redis://localhost:6379'
+      Redis.new url: url
+    end.call
   end
 end
