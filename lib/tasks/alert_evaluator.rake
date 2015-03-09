@@ -67,10 +67,10 @@ class AlertEvaluator
       "quantity" => "1",
       "size" => "1X"
     }
-    queue = Sidekiq::Queue.new
+    ps = Sidekiq::ProcessSet.new
     loop do
       sleep(0.5)
-      if queue.size == 0
+      if ps.size == 0
         heroku.formation.update ENV['APP_NAME'],
           'worker', { "quantity" => "0" }
         break
