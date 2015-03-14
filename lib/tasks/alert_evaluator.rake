@@ -1,7 +1,11 @@
 desc "Fetch stock quotes and send alert emails"
-task :alert_emailer => :environment do
+task :alert_emailer, [:workers, :seconds] => :environment do |t, args|
+  if args.seconds.nil?
+    abort "Must provide seconds e.g. alert_emailer[num_workers,seconds]"
+  end
   puts "running alert evaluator..."
   AlertEvaluator.run
+  ScaleWorkers.run(args.workers, args.seconds.to_f)
   puts "done."
 end
 
@@ -54,5 +58,25 @@ class AlertEvaluator
     ExceptionMailer.delay.mail_exception error.message,
       error.backtrace
     raise error
+  end
+end
+
+class ScaleWorkers
+  def self.run(workers, seconds)
+    if Rails.env.production?
+      heroku = PlatformAPI.connect_oauth(ENV['HEROKU_OAUTH_TOKEN'])
+      puts "scaling workers up..."
+      heroku.formation.update ENV['APP_NAME'], 'worker', {
+        "quantity" => workers,
+        "size" => "1X"
+      }
+      puts "performing jobs..."
+      sleep(seconds)
+      puts "scaling workers down..."
+      heroku.formation.update ENV['APP_NAME'],
+        'worker', { "quantity" => "0" }
+    else
+      puts "sleep for #{seconds} seconds"
+    end
   end
 end
