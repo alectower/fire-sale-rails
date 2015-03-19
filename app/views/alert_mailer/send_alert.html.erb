@@ -5,9 +5,11 @@
   </head>
   <body>
     <h1>It's a fire sale!</h1>
-    <p>
-      <a href="https://www.google.com/finance?q=<%= @symbol %>" target="_blank"><%= @symbol %>'s</a> alert price $<%= @alert_price %>
-    has been triggered, it is now trading at $<%= @current_price %>!
-    </p>
+    <% @alerts.each do |a| %>
+      <p>
+        <a href="https://www.google.com/finance?q=<%= a[:symbol] %>" target="_blank"><%= a[:symbol] %>'s</a> alert price $<%= a[:alert_price] %>
+      has been triggered, it is now trading at $<%= a[:price] %>!
+      </p>
+    <% end %>
   </body>
 </html>

@@ -49,16 +49,22 @@ class AlertEvaluator
 
       companies = [companies] if companies.is_a?(Hash)
 
+      alert_emails = []
       companies.each do |company|
         alert_price = alerts[company['symbol']].to_f
         ask_price = company['ask'].to_f
         bid_price = company['bid'].to_f
         price = ask_price > 0 ? ask_price : bid_price
-        if price <= alert_price
-          puts 'sending email...'
-          AlertMailer.delay.send_alert email,
-            company['symbol'], alert_price, price
-        end
+        alert_emails << {
+          symbol: company['symbol'],
+          alert_price: alert_price,
+          price: price
+        } if price <= alert_price
+      end
+
+      unless alert_emails.empty?
+        puts 'sending email...'
+        AlertMailer.delay.send_alert email, alert_emails
       end
     end
   rescue KeyError, StandardError => error
