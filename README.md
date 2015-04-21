@@ -16,7 +16,7 @@ Stock symbols and alert prices can be entered through the
 Prereqs: postgresql, redis, foreman
 
 ```
-cd rails
+cd fire-sale-rails
 bundle install
 bundle exec rake db:create
 bundle exec rake db:migrate
