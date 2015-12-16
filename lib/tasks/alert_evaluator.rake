@@ -1,5 +1,5 @@
 desc "Fetch stock quotes and send alert emails"
-task :alert_emailer, [:workers, :seconds] => :environment do |t, args|
+task :alert_emailer, [:workers] => :environment do |t, args|
   if Rails.env.production?
     today = Time.now.wday
     if today == 6 || today == 0
@@ -7,12 +7,10 @@ task :alert_emailer, [:workers, :seconds] => :environment do |t, args|
       exit
     end
   end
-  if args.seconds.nil?
-    abort "Must provide seconds e.g. alert_emailer[num_workers,seconds]"
-  end
   puts "running alert evaluator..."
-  AlertEvaluator.run
-  ScaleWorkers.run(args.workers, args.seconds.to_f)
+  ScaleWorkers.run(args.workers) do
+    AlertEvaluator.run
+  end
   puts "done."
 end
 
@@ -39,7 +37,7 @@ class AlertEvaluator
 
       url = '/v1/market/ext/quotes.json?symbols='
       url << alerts.keys.join(',')
-      url << "&fids=ask,bid"
+      url << "&fids=symbol,ask,bid"
 
       response = access_token.get url,
         {'Accept' => 'application/json'}
@@ -75,7 +73,7 @@ class AlertEvaluator
 end
 
 class ScaleWorkers
-  def self.run(workers, seconds)
+  def self.run(workers)
     if Rails.env.production?
       heroku = PlatformAPI.connect_oauth(ENV['HEROKU_OAUTH_TOKEN'])
       puts "scaling workers up..."
@@ -84,12 +82,12 @@ class ScaleWorkers
         "size" => "1X"
       }
       puts "performing jobs..."
-      sleep(seconds)
+      yield
       puts "scaling workers down..."
       heroku.formation.update ENV['APP_NAME'],
         'worker', { "quantity" => "0" }
     else
-      puts "sleep for #{seconds} seconds"
+      yield
     end
   end
 end
