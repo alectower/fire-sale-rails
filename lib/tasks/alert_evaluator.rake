@@ -83,6 +83,7 @@ class ScaleWorkers
       }
       puts "performing jobs..."
       yield
+      sleep(15)
       puts "scaling workers down..."
       heroku.formation.update ENV['APP_NAME'],
         'worker', { "quantity" => "0" }
