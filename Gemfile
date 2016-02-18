@@ -9,7 +9,6 @@ gem 'puma'
 gem 'rails'
 gem 'rails-api'
 gem 'rails_12factor', group: :production
-gem 'redis'
 gem 'sidekiq'
 gem 'sdoc', group: :doc
 
