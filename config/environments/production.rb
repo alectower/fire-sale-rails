@@ -54,10 +54,10 @@ Rails.application.configure do
 
   ActionMailer::Base.smtp_settings = {
       :port =>           '587',
-      :address =>        'smtp.mandrillapp.com',
-      :user_name =>      ENV['MANDRILL_USERNAME'],
-      :password =>       ENV['MANDRILL_APIKEY'],
-      :domain =>         'pure-depths-5751.heroku.com',
+      :address =>        ENV['EMAIL_HOST'],
+      :user_name =>      ENV['EMAIL_USER'],
+      :password =>       ENV['EMAIL_PASS'],
+      :domain =>         ENV['DOMAIN'],
       :authentication => :plain
   }
   ActionMailer::Base.delivery_method = :smtp
